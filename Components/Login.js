@@ -4,36 +4,52 @@ import {
   Text,
   TextInput,
   View,
+  StatusBar,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 
 const Login = ({ openModal }) => {
-  function handleClick() {
-    openModal();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleLoginClick() {
+    if (
+      username.toLowerCase() === "admin" &&
+      password.toLowerCase() === "admin"
+    ) {
+      openModal();
+    } else {
+      alert("Wrong answer! ");
+    }
   }
+
   return (
     <View style={styles.loginContainer}>
-      <View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.loginText}>Username</Text>
-          <TextInput
-            style={styles.loginInput}
-            placeholder="Enter your username"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.loginText}>Password</Text>
-          <TextInput
-            style={styles.loginInput}
-            placeholder="Enter your username"
-          />
-        </View>
-
-        <TouchableOpacity style={styles.loginButton} onPress={handleClick}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+      <View style={styles.inputContainer}>
+        <Text style={styles.loginText}>Username</Text>
+        <TextInput
+          style={styles.loginInput}
+          placeholder="Enter your username"
+          value={username}
+          onChangeText={(text) => setUsername(text)}
+        />
       </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.loginText}>Password</Text>
+        <TextInput
+          style={styles.loginInput}
+          placeholder="Enter your password"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
+      </View>
+
+      <TouchableOpacity style={styles.loginButton} onPress={handleLoginClick}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <StatusBar style="auto"></StatusBar>
     </View>
   );
 };
@@ -42,13 +58,20 @@ export default Login;
 
 const styles = StyleSheet.create({
   loginContainer: {
-    margin: 20,
+    marginBottom: 200,
+    marginHorizontal: 20,
     borderColor: "black",
     borderWidth: 2,
     borderRadius: 30,
 
     paddingHorizontal: 20,
     paddingVertical: 20,
+
+    backgroundColor: "#f3ebea",
+    shadowColor: "black",
+    shadowOffset: { height: 10, width: 10 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
   },
   loginText: {
     marginBottom: 20,
@@ -81,10 +104,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fce823",
 
     shadowColor: "black",
-    shadowOffset: { width: 4, height: 4 },
+    shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
-
-    // elevation: 5,
+    shadowRadius: 0,
   },
   buttonText: {
     fontWeight: "bold",
