@@ -6,11 +6,10 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Platform,
 } from "react-native";
 import Login from "./Components/Login";
+import LoginCalculator from "./Components/LoginCalculator";
 import { useState } from "react";
-import * as Font from "expo-font";
 
 const App = () => {
   const [modalIsVisible, setModalIsVisible] = useState(false);
@@ -36,7 +35,8 @@ const App = () => {
         </View>
       </Modal>
 
-      <Login openModal={() => setModalIsVisible(true)} />
+      {/* <Login openModal={() => setModalIsVisible(true)} /> */}
+      <LoginCalculator openModal={() => setModalIsVisible(true)} />
     </SafeAreaView>
   );
 };
@@ -46,11 +46,11 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f096e3",
+    backgroundColor: "#26a9c7",
     justifyContent: "center",
   },
   modalContainer: {
-    backgroundColor: "#f3ebea",
+    backgroundColor: "#caeaf6",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -76,6 +76,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
     shadowRadius: 0,
+
+    elevation: 5,
   },
   buttonText: {
     fontSize: 16,
