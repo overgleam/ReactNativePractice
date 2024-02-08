@@ -1,42 +1,13 @@
 import React from "react";
-import {
-  Modal,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
-import Login from "./Components/Login";
-import LoginCalculator from "./Components/LoginCalculator";
+import { SafeAreaView, StyleSheet } from "react-native";
 import { useState } from "react";
-
+import TodoList from "./Components/TodoList";
 const App = () => {
   const [modalIsVisible, setModalIsVisible] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Modal
-        visible={modalIsVisible}
-        animationType="slide"
-        onRequestClose={() => setModalIsVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <Text style={styles.welcomeText}>Welcome</Text>
-          <Text style={styles.welcomeText2}>Login Successfully!</Text>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setModalIsVisible(false)}
-            >
-              <Text style={styles.buttonText}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* <Login openModal={() => setModalIsVisible(true)} /> */}
-      <LoginCalculator openModal={() => setModalIsVisible(true)} />
+      <TodoList />
     </SafeAreaView>
   );
 };
@@ -46,8 +17,7 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#26a9c7",
-    justifyContent: "center",
+    backgroundColor: "#95a7e8",
   },
   modalContainer: {
     backgroundColor: "#caeaf6",
