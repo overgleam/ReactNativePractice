@@ -1,15 +1,15 @@
+import React, { useState } from "react";
 import {
   FlatList,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
   Alert,
-  Platform,
   Keyboard,
+  Pressable,
+  RefreshControl,
 } from "react-native";
-import React, { useState } from "react";
 
 const TodoList = () => {
   const [student, setStudent] = useState([
@@ -29,12 +29,18 @@ const TodoList = () => {
   const [filteredStudent, setFilteredStudent] = useState(student);
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
+  const [onPress, setOnPress] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const Item = ({ student }) => {
+    const [pressStudent, setPressStudent] = useState(null);
+
     return (
       <View>
-        <TouchableOpacity
-          style={styles.item}
+        <Pressable
+          style={pressStudent === student.key ? styles.itemActive : styles.item}
+          onPressIn={() => setPressStudent(student.key)}
+          onPressOut={() => setPressStudent(null)}
           onPress={() => handleAlert(student)}
         >
           <Text
@@ -47,7 +53,7 @@ const TodoList = () => {
           >
             {student.name}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   };
@@ -79,6 +85,13 @@ const TodoList = () => {
     Keyboard.dismiss();
   }
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000); // Refresh indicator will be visible for at least 1 second
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.todoContainer}>
@@ -91,19 +104,23 @@ const TodoList = () => {
             value={searchQuery}
           />
           {searching ? (
-            <TouchableOpacity
-              style={styles.searchButton}
+            <Pressable
+              style={onPress ? styles.searchButtonActive : styles.searchButton}
+              onPressIn={() => setOnPress(true)}
+              onPressOut={() => setOnPress(false)}
               onPress={() => handleCancelSearch()}
             >
               <Text style={styles.searchText}>Cancel</Text>
-            </TouchableOpacity>
+            </Pressable>
           ) : (
-            <TouchableOpacity
-              style={styles.searchButton}
+            <Pressable
+              style={onPress ? styles.searchButtonActive : styles.searchButton}
+              onPressIn={() => setOnPress(true)}
+              onPressOut={() => setOnPress(false)}
               onPress={() => handleSearch()}
             >
               <Text style={styles.searchText}>Search</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
         <View style={styles.listContainer}>
@@ -115,6 +132,9 @@ const TodoList = () => {
               <Text style={{ textAlign: "center" }}>No students found</Text>
             )}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           />
         </View>
       </View>
@@ -183,6 +203,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
   },
+  searchButtonActive: {
+    backgroundColor: "#f7b302",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 15,
+
+    top: 3,
+    left: 4,
+    shadowOpacity: 0,
+
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+
+    textAlign: "center",
+    justifyContent: "center",
+  },
   searchText: {
     color: "#2b2f33",
   },
@@ -207,6 +243,20 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 3, width: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
+
+    padding: 10,
+    margin: 5,
+  },
+  itemActive: {
+    backgroundColor: "#fce823",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 10,
+
+    top: 3,
+    left: 4,
+
+    shadowOpacity: 0,
 
     padding: 10,
     margin: 5,
