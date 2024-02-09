@@ -37,7 +37,14 @@ const TodoList = () => {
           style={styles.item}
           onPress={() => handleAlert(student)}
         >
-          <Text style={{ color: "#2b2f33", marginLeft: 10 }}>
+          <Text
+            style={{
+              color: "#2b2f33",
+              marginLeft: 10,
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
             {student.name}
           </Text>
         </TouchableOpacity>
@@ -142,7 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   textInput: {
-    backgroundColor: "#fce823",
+    backgroundColor: "#fbe0dd",
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 10,
@@ -150,6 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     flex: 1,
+    width: 0,
 
     shadowColor: "black",
     shadowOffset: { height: 3, width: 4 },
@@ -179,11 +187,18 @@ const styles = StyleSheet.create({
     color: "#2b2f33",
   },
   listContainer: {
+    backgroundColor: "#ebdedc",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 10,
+
     height: 489,
     marginTop: 20,
+    paddingHorizontal: 20,
+    paddingTop: 10,
   },
   item: {
-    backgroundColor: "#fbe0dd",
+    backgroundColor: "#fce823",
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 10,
