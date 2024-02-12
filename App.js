@@ -2,7 +2,6 @@ import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { useState } from "react";
 import TodoList from "./Components/TodoList";
-import AnimatedButton from "./Components/AnimatedButton";
 const App = () => {
   const [modalIsVisible, setModalIsVisible] = useState(false);
 

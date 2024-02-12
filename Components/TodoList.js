@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -9,28 +9,32 @@ import {
   Keyboard,
   Pressable,
   RefreshControl,
+  Dimensions,
 } from "react-native";
+import students from "./students.json";
 
 const TodoList = () => {
-  const [student, setStudent] = useState([
-    { key: "1", name: "Joseph Alforque", course: "BSCS", level: "1" },
-    { key: "2", name: "Dennis Durano", course: "BSCE", level: "2" },
-    { key: "3", name: "Nonito Odjinar", course: "BSCS", level: "3" },
-    { key: "4", name: "Heubert Ferolino", course: "BSCS", level: "4" },
-    { key: "5", name: "Neil Basabe", course: "BSCS", level: "5" },
-    { key: "6", name: "Homer Bustrillo", course: "BSBA", level: "6" },
-    { key: "7", name: "Jennifer Amores", course: "BSA", level: "7" },
-    { key: "8", name: "Leah Ybañez", course: "BSHM", level: "8" },
-    { key: "9", name: "Jeff Salimbangon", course: "BSCE", level: "9" },
-    { key: "10", name: "Eric Ortega", course: "BSHRM", level: "10" },
-    { key: "11", name: "Leo Bermudez", course: "BSBO", level: "11" },
-    { key: "12", name: "ChatGPT", course: "All", level: "God" },
-  ]);
+  const [dimensions, setDimensions] = useState({
+    window: Dimensions.get("window"),
+  });
+  const [student, setStudent] = useState(students);
   const [filteredStudent, setFilteredStudent] = useState(student);
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [onPress, setOnPress] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+      setDimensions({ window });
+    });
+    return () => subscription?.remove();
+  });
+
+  const { window } = dimensions;
+  const windowHeight = window.height;
+  const windowWidth = window.width;
 
   const Item = ({ student }) => {
     const [pressStudent, setPressStudent] = useState(null);
@@ -46,7 +50,6 @@ const TodoList = () => {
           <Text
             style={{
               color: "#2b2f33",
-              marginLeft: 10,
               fontWeight: "bold",
               textAlign: "center",
             }}
@@ -97,11 +100,15 @@ const TodoList = () => {
       <View style={styles.todoContainer}>
         <View style={styles.searchContainer}>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, isFocused && styles.textInputActive]}
             placeholder="Search"
             placeholderTextColor="#835579"
             onChangeText={(text) => setSearchQuery(text)}
             value={searchQuery}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            editable={searching ? false : true}
+            selectable={searching ? false : true}
           />
           {searching ? (
             <Pressable
@@ -123,7 +130,12 @@ const TodoList = () => {
             </Pressable>
           )}
         </View>
-        <View style={styles.listContainer}>
+        <View
+          style={[
+            styles.listContainer,
+            { height: windowHeight > 500 ? "90%" : "80%" },
+          ]}
+        >
           <FlatList
             data={filteredStudent}
             renderItem={({ item }) => <Item student={item} />}
@@ -135,6 +147,7 @@ const TodoList = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            ItemSeparatorComponent={<View style={{ height: 20 }}></View>}
           />
         </View>
       </View>
@@ -150,11 +163,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#95a7e8",
     justifyContent: "center",
 
-    padding: 20,
+    paddingHorizontal: 20,
   },
   todoContainer: {
     backgroundColor: "#f3ebea",
-    height: 600,
+    height: "80%",
     borderColor: "black",
     borderWidth: 2,
     borderRadius: 10,
@@ -179,12 +192,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: 0,
 
+    marginRight: 10,
+  },
+  textInputActive: {
     shadowColor: "black",
-    shadowOffset: { height: 3, width: 4 },
+    shadowOffset: { height: 4, width: 5 },
     shadowOpacity: 1,
     shadowRadius: 0,
-
-    marginRight: 10,
   },
   searchButton: {
     backgroundColor: "#f7b302",
@@ -228,7 +242,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
 
-    height: 489,
+    height: 500 ? "80%" : "90%",
     marginTop: 20,
     paddingHorizontal: 20,
     paddingTop: 10,
@@ -240,12 +254,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
     shadowColor: "black",
-    shadowOffset: { height: 3, width: 4 },
+    shadowOffset: { height: 4, width: 5 },
     shadowOpacity: 1,
     shadowRadius: 0,
 
-    padding: 10,
-    margin: 5,
+    paddingVertical: 14,
+    marginHorizontal: 5,
   },
   itemActive: {
     backgroundColor: "#fce823",
@@ -253,12 +267,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
 
-    top: 3,
-    left: 4,
+    top: 4,
+    left: 5,
 
     shadowOpacity: 0,
 
-    padding: 10,
-    margin: 5,
+    paddingVertical: 14,
+    marginHorizontal: 5,
   },
 });
