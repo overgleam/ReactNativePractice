@@ -10,6 +10,9 @@ import {
   Pressable,
   RefreshControl,
   Dimensions,
+  Modal,
+  KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import students from "./students.json";
 
@@ -22,22 +25,134 @@ const TodoList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [onPress, setOnPress] = useState(false);
+  const [onPressAdd, setOnPressAdd] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [addStudent, setAddStudent] = useState(false);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", ({ window }) => {
       setDimensions({ window });
     });
     return () => subscription?.remove();
-  });
+  }, [dimensions]);
 
   const { window } = dimensions;
   const windowHeight = window.height;
-  const windowWidth = window.width;
+
+  const deleteStudent = (studentKey) => {
+    const updatedStudent = student.filter((s) => s.key !== studentKey.key);
+    setStudent(updatedStudent);
+    setFilteredStudent(updatedStudent);
+
+    setSearchQuery("");
+    setSearching(false);
+    Alert.alert("Student Deleted");
+  };
+
+  const editStudent = (s) => {
+    setEditingStudent(s);
+    setModalIsVisible(true);
+  };
+
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editedName, setEditedName] = useState("");
+  const [editedCourse, setEditedCourse] = useState("");
+  const [editedLevel, setEditedLevel] = useState("");
+
+  const handleEditStudent = () => {
+    // Find the index of the editing student in the list
+    const index = student.findIndex((s) => s.key === editingStudent.key);
+    if (index !== -1) {
+      if (editedName && editedCourse && editedLevel) {
+        // Create a copy of the original student list
+        const updatedStudentList = [...student];
+        // Update the student data with the edited values
+        updatedStudentList[index] = {
+          ...editingStudent,
+          name: editedName,
+          course: editedCourse,
+          level: editedLevel,
+        };
+        // Update the state with the new student list
+        setStudent(updatedStudentList);
+        setFilteredStudent(updatedStudentList);
+        // Close the modal
+        setModalIsVisible(false);
+        // Reset the editing fields
+        setEditingStudent(null);
+        setEditedName("");
+        setEditedCourse("");
+        setEditedLevel("");
+
+        setSearchQuery("");
+        setSearching(false);
+        // Show success message
+        Alert.alert("Student Updated Successfully");
+      } else {
+        Alert.alert("Fill all fields!");
+      }
+    }
+  };
+
+  function handleAdd() {
+    setAddStudent(true);
+    setModalIsVisible(true);
+  }
+
+  function handleAddStudent() {
+    if (editedName && editedCourse && editedLevel) {
+      const maxKey = student.reduce(
+        (max, s) => Math.max(max, parseInt(s.key)),
+        0
+      );
+      // Increment the maximum key value by 1 for the new item
+      const newKey = (maxKey + 1).toString();
+
+      const newItem = {
+        key: newKey,
+        name: editedName,
+        course: editedCourse,
+        level: editedLevel,
+      };
+
+      setStudent((f) => [...f, newItem]);
+      setFilteredStudent((a) => [...a, newItem]);
+      setEditedName("");
+      setEditedCourse("");
+      setEditedLevel("");
+      setAddStudent(false);
+      setModalIsVisible(false);
+      Alert.alert("Student Added Successfully");
+    } else {
+      Alert.alert("Fill all fields!");
+    }
+  }
 
   const Item = ({ student }) => {
     const [pressStudent, setPressStudent] = useState(null);
+
+    const handleEdit = () => {
+      Alert.alert(
+        "Student Information",
+        `Key: ${student.key}\nName: ${student.name}\nCourse: ${student.course}\nLevel: ${student.level}`,
+        [
+          {
+            text: "Edit",
+            onPress: () => editStudent(student),
+            style: "default",
+            isPreferred: true,
+          },
+          {
+            text: "Delete",
+            onPress: () => deleteStudent(student),
+            style: "destructive",
+          },
+          { text: "Cancel", style: "cancel" },
+        ]
+      );
+    };
 
     return (
       <View>
@@ -45,6 +160,7 @@ const TodoList = () => {
           style={pressStudent === student.key ? styles.itemActive : styles.item}
           onPressIn={() => setPressStudent(student.key)}
           onPressOut={() => setPressStudent(null)}
+          onLongPress={() => handleEdit()}
           onPress={() => handleAlert(student)}
         >
           <Text
@@ -129,6 +245,14 @@ const TodoList = () => {
               <Text style={styles.searchText}>Search</Text>
             </Pressable>
           )}
+          <Pressable
+            style={onPressAdd ? styles.addButtonActive : styles.addButton}
+            onPressIn={() => setOnPressAdd(true)}
+            onPressOut={() => setOnPressAdd(false)}
+            onPress={() => handleAdd()}
+          >
+            <Text style={styles.searchText}>Add</Text>
+          </Pressable>
         </View>
         <View
           style={[
@@ -151,6 +275,90 @@ const TodoList = () => {
           />
         </View>
       </View>
+      <Modal
+        visible={modalIsVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalIsVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={100}
+          style={{
+            flex: 1,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            marginTop: "50%",
+            backgroundColor: "#f3ebea",
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View
+              style={{
+                flex: 1,
+                marginTop: 100,
+                justifyContent: "center",
+              }}
+            >
+              <TextInput
+                style={
+                  addStudent
+                    ? [styles.modalTextInput, { backgroundColor: "#1ead82" }]
+                    : styles.modalTextInput
+                }
+                placeholder="Name"
+                value={editedName}
+                onChangeText={setEditedName}
+              />
+              <TextInput
+                style={
+                  addStudent
+                    ? [styles.modalTextInput, { backgroundColor: "#1ead82" }]
+                    : styles.modalTextInput
+                }
+                placeholder="Course"
+                value={editedCourse}
+                onChangeText={setEditedCourse}
+              />
+              <TextInput
+                style={
+                  addStudent
+                    ? [styles.modalTextInput, { backgroundColor: "#1ead82" }]
+                    : styles.modalTextInput
+                }
+                placeholder="Level"
+                value={editedLevel}
+                onChangeText={setEditedLevel}
+              />
+              <View
+                style={{
+                  alignSelf: "center",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  marginTop: 20,
+                  width: "50%",
+                }}
+              >
+                <TouchableOpacity
+                  style={styles.modalButton1}
+                  onPress={addStudent ? handleAddStudent : handleEditStudent}
+                >
+                  <Text>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButton2}
+                  onPress={() => {
+                    setAddStudent(false);
+                    setModalIsVisible(false);
+                  }}
+                >
+                  <Text>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 };
@@ -213,7 +421,7 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 12,
     paddingVertical: 10,
-
+    marginRight: 10,
     textAlign: "center",
     justifyContent: "center",
   },
@@ -229,12 +437,45 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 12,
     paddingVertical: 10,
-
+    marginRight: 10,
     textAlign: "center",
     justifyContent: "center",
   },
   searchText: {
     color: "#2b2f33",
+  },
+  addButton: {
+    backgroundColor: "#fd84e3",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 15,
+
+    shadowColor: "black",
+    shadowOffset: { height: 3, width: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+
+    textAlign: "center",
+    justifyContent: "center",
+  },
+  addButtonActive: {
+    backgroundColor: "#dcb247",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 15,
+
+    top: 3,
+    left: 4,
+    shadowOpacity: 0,
+
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+
+    textAlign: "center",
+    justifyContent: "center",
   },
   listContainer: {
     backgroundColor: "#ebdedc",
@@ -274,5 +515,59 @@ const styles = StyleSheet.create({
 
     paddingVertical: 14,
     marginHorizontal: 5,
+  },
+
+  modalContainer: {
+    flex: 1,
+  },
+  modalTextInput: {
+    backgroundColor: "#fbe0dd",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 10,
+
+    shadowColor: "black",
+    shadowOffset: { height: 4, width: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+
+    paddingHorizontal: 25,
+    paddingVertical: 15,
+    marginHorizontal: 50,
+    marginVertical: 10,
+  },
+  modalButton1: {
+    backgroundColor: "#f7b302",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 15,
+
+    shadowColor: "black",
+    shadowOffset: { height: 3, width: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  modalButton2: {
+    backgroundColor: "#fd84e3",
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 15,
+
+    shadowColor: "black",
+    shadowOffset: { height: 3, width: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginLeft: 10,
   },
 });
