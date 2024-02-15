@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -6,10 +6,7 @@ import {
   TextInput,
   View,
   Alert,
-  Keyboard,
-  Pressable,
   RefreshControl,
-  Dimensions,
   Modal,
   KeyboardAvoidingView,
   TouchableOpacity,
@@ -17,38 +14,20 @@ import {
 import students from "./students.json";
 
 const TodoList = () => {
-  const [dimensions, setDimensions] = useState({
-    window: Dimensions.get("window"),
-  });
   const [student, setStudent] = useState(students);
-  const [filteredStudent, setFilteredStudent] = useState(student);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searching, setSearching] = useState(false);
-  const [onPress, setOnPress] = useState(false);
-  const [onPressAdd, setOnPressAdd] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [addStudent, setAddStudent] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editedName, setEditedName] = useState("");
+  const [editedCourse, setEditedCourse] = useState("");
+  const [editedLevel, setEditedLevel] = useState("");
 
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", ({ window }) => {
-      setDimensions({ window });
-    });
-    return () => subscription?.remove();
-  }, [dimensions]);
-
-  const { window } = dimensions;
-  const windowHeight = window.height;
-
-  const deleteStudent = (studentKey) => {
-    const updatedStudent = student.filter((s) => s.key !== studentKey.key);
-    setStudent(updatedStudent);
-    setFilteredStudent(updatedStudent);
-
-    setSearchQuery("");
-    setSearching(false);
-    Alert.alert("Student Deleted");
+  const clearFields = () => {
+    setEditedName("");
+    setEditedCourse("");
+    setEditedLevel("");
   };
 
   const editStudent = (s) => {
@@ -56,83 +35,65 @@ const TodoList = () => {
     setModalIsVisible(true);
   };
 
-  const [editingStudent, setEditingStudent] = useState(null);
-  const [editedName, setEditedName] = useState("");
-  const [editedCourse, setEditedCourse] = useState("");
-  const [editedLevel, setEditedLevel] = useState("");
-
   const handleEditStudent = () => {
-    // Find the index of the editing student in the list
-    const index = student.findIndex((s) => s.key === editingStudent.key);
-    if (index !== -1) {
-      if (editedName && editedCourse && editedLevel) {
-        // Create a copy of the original student list
-        const updatedStudentList = [...student];
-        // Update the student data with the edited values
-        updatedStudentList[index] = {
-          ...editingStudent,
-          name: editedName,
-          course: editedCourse,
-          level: editedLevel,
-        };
-        // Update the state with the new student list
-        setStudent(updatedStudentList);
-        setFilteredStudent(updatedStudentList);
-        // Close the modal
-        setModalIsVisible(false);
-        // Reset the editing fields
-        setEditingStudent(null);
-        setEditedName("");
-        setEditedCourse("");
-        setEditedLevel("");
-
-        setSearchQuery("");
-        setSearching(false);
-        // Show success message
-        Alert.alert("Student Updated Successfully");
-      } else {
-        Alert.alert("Fill all fields!");
-      }
-    }
-  };
-
-  function handleAdd() {
-    setAddStudent(true);
-    setModalIsVisible(true);
-  }
-
-  function handleAddStudent() {
     if (editedName && editedCourse && editedLevel) {
-      const maxKey = student.reduce(
-        (max, s) => Math.max(max, parseInt(s.key)),
-        0
-      );
-      // Increment the maximum key value by 1 for the new item
-      const newKey = (maxKey + 1).toString();
-
-      const newItem = {
-        key: newKey,
-        name: editedName,
-        course: editedCourse,
-        level: editedLevel,
-      };
-
-      setStudent((f) => [...f, newItem]);
-      setFilteredStudent((a) => [...a, newItem]);
-      setEditedName("");
-      setEditedCourse("");
-      setEditedLevel("");
-      setAddStudent(false);
+      const updatedStudent = student.map((s) => {
+        if (s.key === editingStudent.key) {
+          s.name = editedName;
+          s.course = editedCourse;
+          s.level = editedLevel;
+        }
+        return s;
+      });
+      setStudent(updatedStudent);
       setModalIsVisible(false);
-      Alert.alert("Student Added Successfully");
+      setEditingStudent(null);
+      Alert.alert("Student Updated Successfully");
     } else {
       Alert.alert("Fill all fields!");
     }
+  };
+
+  const deleteStudent = (studentKey) => {
+    const updatedStudent = student.filter((s) => s.key !== studentKey.key);
+    setStudent(updatedStudent);
+    Alert.alert(
+      "Student Deleted Successfully",
+      `Key: ${studentKey.key}\nName: ${studentKey.name}\nCourse: ${studentKey.course}\nLevel: ${studentKey.level}`
+    );
+  };
+
+  function handleAdd() {
+    setModalIsVisible(true);
+    setAddStudent(true);
+  }
+
+  function handleAddStudent() {
+    if (!editedName || !editedCourse || !editedLevel) {
+      Alert.alert("Fill all fields!");
+      return;
+    }
+
+    const maxKey = Math.max(...student.map((s) => parseInt(s.key)), 0);
+    const newKey = (maxKey + 1).toString();
+
+    const newItem = {
+      key: newKey,
+      name: editedName,
+      course: editedCourse,
+      level: editedLevel,
+    };
+
+    setStudent((prevStudents) => [...prevStudents, newItem]);
+
+    clearFields();
+
+    setAddStudent(false);
+    setModalIsVisible(false);
+    Alert.alert("Student Added Successfully");
   }
 
   const Item = ({ student }) => {
-    const [pressStudent, setPressStudent] = useState(null);
-
     const handleEdit = () => {
       Alert.alert(
         "Student Information",
@@ -154,55 +115,33 @@ const TodoList = () => {
       );
     };
 
+    const handlePress = () => {
+      Alert.alert(
+        "Student Information",
+        `Key: ${student.key}\nName: ${student.name}\nCourse: ${student.course}\nLevel: ${student.level}`
+      );
+    };
+
     return (
       <View>
-        <Pressable
-          style={pressStudent === student.key ? styles.itemActive : styles.item}
-          onPressIn={() => setPressStudent(student.key)}
-          onPressOut={() => setPressStudent(null)}
-          onLongPress={() => handleEdit()}
-          onPress={() => handleAlert(student)}
+        <TouchableOpacity
+          style={styles.item}
+          onLongPress={handleEdit}
+          onPress={handlePress}
         >
-          <Text
-            style={{
-              color: "#2b2f33",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {student.name}
-          </Text>
-        </Pressable>
+          <Text style={{ textAlign: "center" }}>{student.name}</Text>
+        </TouchableOpacity>
       </View>
     );
   };
 
-  function handleAlert(student) {
-    Alert.alert(
-      "Student Information",
-      `Key: ${student.key}\nName: ${student.name}\nCourse: ${student.course}\nLevel: ${student.level}`
+  const filteredStudent = student.filter((item) => {
+    return (
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.course.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.level.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }
-
-  function handleSearch() {
-    if (searchQuery) {
-      let newData = student.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.course.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.level.toLowerCase().includes(searchQuery)
-      );
-      setFilteredStudent(newData);
-      setSearching(true);
-      Keyboard.dismiss();
-    }
-  }
-  function handleCancelSearch() {
-    setSearchQuery("");
-    setFilteredStudent(student);
-    setSearching(false);
-    Keyboard.dismiss();
-  }
+  });
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -216,50 +155,20 @@ const TodoList = () => {
       <View style={styles.todoContainer}>
         <View style={styles.searchContainer}>
           <TextInput
-            style={[styles.textInput, isFocused && styles.textInputActive]}
+            style={styles.textInput}
             placeholder="Search"
             placeholderTextColor="#835579"
             onChangeText={(text) => setSearchQuery(text)}
             value={searchQuery}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            editable={searching ? false : true}
-            selectable={searching ? false : true}
           />
-          {searching ? (
-            <Pressable
-              style={onPress ? styles.searchButtonActive : styles.searchButton}
-              onPressIn={() => setOnPress(true)}
-              onPressOut={() => setOnPress(false)}
-              onPress={() => handleCancelSearch()}
-            >
-              <Text style={styles.searchText}>Cancel</Text>
-            </Pressable>
-          ) : (
-            <Pressable
-              style={onPress ? styles.searchButtonActive : styles.searchButton}
-              onPressIn={() => setOnPress(true)}
-              onPressOut={() => setOnPress(false)}
-              onPress={() => handleSearch()}
-            >
-              <Text style={styles.searchText}>Search</Text>
-            </Pressable>
-          )}
-          <Pressable
-            style={onPressAdd ? styles.addButtonActive : styles.addButton}
-            onPressIn={() => setOnPressAdd(true)}
-            onPressOut={() => setOnPressAdd(false)}
+          <TouchableOpacity
+            style={styles.addButton}
             onPress={() => handleAdd()}
           >
-            <Text style={styles.searchText}>Add</Text>
-          </Pressable>
+            <Text style={{ color: "white" }}>Add</Text>
+          </TouchableOpacity>
         </View>
-        <View
-          style={[
-            styles.listContainer,
-            { height: windowHeight > 500 ? "90%" : "80%" },
-          ]}
-        >
+        <View style={styles.listContainer}>
           <FlatList
             data={filteredStudent}
             renderItem={({ item }) => <Item student={item} />}
@@ -277,33 +186,45 @@ const TodoList = () => {
       </View>
       <Modal
         visible={modalIsVisible}
-        transparent={true}
+        presentationStyle="pageSheet"
         animationType="slide"
-        onRequestClose={() => setModalIsVisible(false)}
+        onRequestClose={() => {
+          clearFields();
+          setEditingStudent(null);
+          setAddStudent(false);
+          setModalIsVisible(false);
+        }}
       >
         <KeyboardAvoidingView
           behavior="padding"
           keyboardVerticalOffset={100}
           style={{
             flex: 1,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            marginTop: "50%",
-            backgroundColor: "#f3ebea",
+            backgroundColor: "#ebdedc",
           }}
         >
           <View style={styles.modalContainer}>
-            <View
+            <Text
               style={{
-                flex: 1,
-                marginTop: 100,
-                justifyContent: "center",
+                fontSize: 22,
+                fontWeight: "bold",
+                textAlign: "center",
+                marginBottom: 10,
+                lineHeight: 30,
               }}
             >
+              {editingStudent
+                ? `Editing :
+${editingStudent.name}
+${editingStudent.course}
+${editingStudent.level}`
+                : "Adding Student"}
+            </Text>
+            <View>
               <TextInput
                 style={
                   addStudent
-                    ? [styles.modalTextInput, { backgroundColor: "#1ead82" }]
+                    ? [styles.modalTextInput, { backgroundColor: "#ebdedc" }]
                     : styles.modalTextInput
                 }
                 placeholder="Name"
@@ -313,7 +234,7 @@ const TodoList = () => {
               <TextInput
                 style={
                   addStudent
-                    ? [styles.modalTextInput, { backgroundColor: "#1ead82" }]
+                    ? [styles.modalTextInput, { backgroundColor: "#ebdedc" }]
                     : styles.modalTextInput
                 }
                 placeholder="Course"
@@ -323,7 +244,7 @@ const TodoList = () => {
               <TextInput
                 style={
                   addStudent
-                    ? [styles.modalTextInput, { backgroundColor: "#1ead82" }]
+                    ? [styles.modalTextInput, { backgroundColor: "#ebdedc" }]
                     : styles.modalTextInput
                 }
                 placeholder="Level"
@@ -348,6 +269,8 @@ const TodoList = () => {
                 <TouchableOpacity
                   style={styles.modalButton2}
                   onPress={() => {
+                    clearFields();
+                    setEditingStudent(null);
                     setAddStudent(false);
                     setModalIsVisible(false);
                   }}
@@ -369,13 +292,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#95a7e8",
-    justifyContent: "center",
 
+    paddingVertical: 100,
     paddingHorizontal: 20,
   },
   todoContainer: {
+    flex: 1,
     backgroundColor: "#f3ebea",
-    height: "80%",
     borderColor: "black",
     borderWidth: 2,
     borderRadius: 10,
@@ -402,50 +325,8 @@ const styles = StyleSheet.create({
 
     marginRight: 10,
   },
-  textInputActive: {
-    shadowColor: "black",
-    shadowOffset: { height: 4, width: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-  },
-  searchButton: {
-    backgroundColor: "#f7b302",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 15,
-
-    shadowColor: "black",
-    shadowOffset: { height: 3, width: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginRight: 10,
-    textAlign: "center",
-    justifyContent: "center",
-  },
-  searchButtonActive: {
-    backgroundColor: "#f7b302",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 15,
-
-    top: 3,
-    left: 4,
-    shadowOpacity: 0,
-
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginRight: 10,
-    textAlign: "center",
-    justifyContent: "center",
-  },
-  searchText: {
-    color: "#2b2f33",
-  },
   addButton: {
-    backgroundColor: "#fd84e3",
+    backgroundColor: "#2c3034",
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 15,
@@ -454,22 +335,6 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 3, width: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
-
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-
-    textAlign: "center",
-    justifyContent: "center",
-  },
-  addButtonActive: {
-    backgroundColor: "#dcb247",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 15,
-
-    top: 3,
-    left: 4,
-    shadowOpacity: 0,
 
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -478,18 +343,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   listContainer: {
+    flex: 1,
     backgroundColor: "#ebdedc",
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 10,
 
-    height: 500 ? "80%" : "90%",
     marginTop: 20,
     paddingHorizontal: 20,
     paddingTop: 10,
   },
   item: {
-    backgroundColor: "#fce823",
+    backgroundColor: "#fcc128",
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 10,
@@ -502,23 +367,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginHorizontal: 5,
   },
-  itemActive: {
-    backgroundColor: "#fce823",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 10,
-
-    top: 4,
-    left: 5,
-
-    shadowOpacity: 0,
-
-    paddingVertical: 14,
-    marginHorizontal: 5,
-  },
-
   modalContainer: {
     flex: 1,
+    justifyContent: "center",
   },
   modalTextInput: {
     backgroundColor: "#fbe0dd",
