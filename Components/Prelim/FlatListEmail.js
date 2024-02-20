@@ -13,6 +13,14 @@ import React from "react";
 import Email from "./Emails.json";
 
 const FlatListEmail = ({ navigation, route }) => {
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      onRefresh();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [email, setEmail] = useState(Email);
@@ -29,7 +37,6 @@ const FlatListEmail = ({ navigation, route }) => {
     navigation.navigate("EditEmail", {
       user: user,
       email: email,
-      updateEmails: setEmail,
     });
   };
 
@@ -84,9 +91,6 @@ const FlatListEmail = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{ textAlign: "center" }}>
-        please swipe down to refresh after adding
-      </Text>
       <View style={styles.todoContainer}>
         <View style={styles.searchContainer}>
           <TextInput
@@ -99,7 +103,7 @@ const FlatListEmail = ({ navigation, route }) => {
         </View>
         <View style={styles.listContainer}>
           <FlatList
-            data={filterEmail ? filterEmail : email}
+            data={filterEmail ? filterEmail : Email}
             renderItem={({ item }) => <Item user={item} />}
             keyExtractor={(item) => item.key}
             ListEmptyComponent={() => (

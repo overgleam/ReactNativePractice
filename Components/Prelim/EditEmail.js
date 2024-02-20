@@ -9,7 +9,9 @@ import { useState } from "react";
 import React from "react";
 
 const EditEmail = ({ navigation, route }) => {
-  const { email } = route.params || { email: [] };
+  const { email, user } = route.params || {
+    email: [],
+  };
   const [editEmail, setEditEmail] = useState("");
   const [editPassword, setEditPassword] = useState("");
 
@@ -24,10 +26,9 @@ const EditEmail = ({ navigation, route }) => {
         }
         return e;
       });
-
       navigation.goBack();
 
-      route.params.updateEmails(newEmail);
+      // updateEmail(newEmail);
     }
   };
 

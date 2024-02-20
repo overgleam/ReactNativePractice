@@ -25,35 +25,37 @@ const LoginEmail = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.loginContainer}>
-      <View style={styles.inputContainer}>
-        <Text style={styles.loginText}>Email</Text>
-        <TextInput
-          style={styles.loginInput}
-          placeholder="Enter your username"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
-      </View>
+    <View style={{ justifyContent: "center", flex: 1, padding: 20 }}>
+      <View style={styles.loginContainer}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.loginText}>Email</Text>
+          <TextInput
+            style={styles.loginInput}
+            placeholder="Enter your username"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+        </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.loginText}>Password</Text>
-        <TextInput
-          style={styles.loginInput}
-          placeholder="Enter your password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-      </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.loginText}>Password</Text>
+          <TextInput
+            style={styles.loginInput}
+            placeholder="Enter your password"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+        </View>
 
-      <TouchableOpacity
-        style={styles.loginButton}
-        onPress={navigateToFlatListEmail}
-      >
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <StatusBar style="auto"></StatusBar>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={navigateToFlatListEmail}
+        >
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <StatusBar style="auto"></StatusBar>
+      </View>
     </View>
   );
 };

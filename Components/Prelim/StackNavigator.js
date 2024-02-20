@@ -9,23 +9,23 @@ import EditEmail from "./EditEmail";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
+
+  const header = () => {
+    return (
+      <View>
+        <Text style={{ marginRight: 30, fontWeight: "500", fontSize: 18 }}>
+          ALFORQUE
+        </Text>
+      </View>
+    );
+  };
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginEmail">
         <Stack.Screen
           options={{
             title: "PRELIM",
-            headerRight: () => (
-              <Text
-                style={{ marginRight: 30, fontWeight: "500", fontSize: 18 }}
-              >
-                ALFORQUE
-              </Text>
-            ),
-            headerTitleAlign: "left",
-            headerTitleStyle: {
-              marginLeft: 10, // Adjust this value as needed
-            },
+            headerRight: () => header(),
           }}
           name="LoginEmail"
           component={LoginEmail}
@@ -33,18 +33,8 @@ const StackNavigator = () => {
         <Stack.Screen
           options={{
             title: "PRELIM",
-            headerRight: () => (
-              <Text
-                style={{ marginRight: 30, fontWeight: "500", fontSize: 18 }}
-              >
-                ALFORQUE
-              </Text>
-            ),
-            headerTitleAlign: "left",
-            headerTitleStyle: {
-              marginLeft: 10, // Adjust this value as needed
-            },
-            headerLeft: null,
+            headerRight: () => header(),
+            headerBackVisible: false,
           }}
           name="FlatListEmail"
           component={FlatListEmail}
@@ -52,17 +42,8 @@ const StackNavigator = () => {
         <Stack.Screen
           options={{
             title: "PRELIM",
-            headerRight: () => (
-              <Text
-                style={{ marginRight: 30, fontWeight: "500", fontSize: 18 }}
-              >
-                ALFORQUE
-              </Text>
-            ),
-            headerTitleAlign: "left",
-            headerTitleStyle: {
-              marginLeft: 10, // Adjust this value as needed
-            },
+            headerRight: () => header(),
+            headerBackVisible: false,
           }}
           name="AddEmail"
           component={AddEmail}
@@ -70,17 +51,7 @@ const StackNavigator = () => {
         <Stack.Screen
           options={{
             title: "PRELIM",
-            headerRight: () => (
-              <Text
-                style={{ marginRight: 30, fontWeight: "500", fontSize: 18 }}
-              >
-                ALFORQUE
-              </Text>
-            ),
-            headerTitleAlign: "left",
-            headerTitleStyle: {
-              marginLeft: 10, // Adjust this value as needed
-            },
+            headerBackVisible: false,
           }}
           name="EditEmail"
           component={EditEmail}

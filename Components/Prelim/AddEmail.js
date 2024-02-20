@@ -27,7 +27,7 @@ const AddEmail = ({ navigation, route }) => {
       };
 
       email.push(newEmail);
-      navigation.goBack();
+      navigation.navigate("FlatListEmail");
     }
   };
 
