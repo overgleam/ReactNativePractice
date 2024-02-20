@@ -1,11 +1,11 @@
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { useState } from "react";
-import TodoList from "./Components/TodoList";
+import StackNavigator from "./Components/Prelim/StackNavigator";
+
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <TodoList />
+      <StackNavigator />
     </SafeAreaView>
   );
 };
