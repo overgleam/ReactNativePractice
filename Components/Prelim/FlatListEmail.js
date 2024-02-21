@@ -8,12 +8,12 @@ import {
   Alert,
   RefreshControl,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import Email from "./Emails.json";
 
-const FlatListEmail = ({ navigation, route }) => {
-  React.useEffect(() => {
+const FlatListEmail = ({ navigation }) => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       onRefresh();
     });
@@ -86,7 +86,7 @@ const FlatListEmail = ({ navigation, route }) => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 1000); // Refresh indicator will be visible for at least 1 second
+    }, 800); // Refresh indicator will be visible for at least 1 second
   };
 
   return (
@@ -103,7 +103,7 @@ const FlatListEmail = ({ navigation, route }) => {
         </View>
         <View style={styles.listContainer}>
           <FlatList
-            data={filterEmail ? filterEmail : Email}
+            data={filterEmail}
             renderItem={({ item }) => <Item user={item} />}
             keyExtractor={(item) => item.key}
             ListEmptyComponent={() => (

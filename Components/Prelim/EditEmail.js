@@ -9,26 +9,29 @@ import { useState } from "react";
 import React from "react";
 
 const EditEmail = ({ navigation, route }) => {
-  const { email, user } = route.params || {
-    email: [],
-  };
+  const { email, user } = route.params;
   const [editEmail, setEditEmail] = useState("");
   const [editPassword, setEditPassword] = useState("");
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleEdit = () => {
     if (editEmail === "" || editPassword === "") {
       alert("Please fill up the form");
+    } else if (!validateEmail(editEmail)) {
+      alert("Please enter a valid email address");
     } else {
       const newEmail = email.map((e) => {
-        if (e.key === route.params.user.key) {
+        if (e.key === user.key) {
           e.email = editEmail;
           e.password = editPassword;
         }
         return e;
       });
       navigation.goBack();
-
-      // updateEmail(newEmail);
     }
   };
 
@@ -55,6 +58,7 @@ const EditEmail = ({ navigation, route }) => {
           placeholder="Edit Password"
           value={editPassword}
           onChangeText={setEditPassword}
+          secureTextEntry={true}
         />
 
         <View

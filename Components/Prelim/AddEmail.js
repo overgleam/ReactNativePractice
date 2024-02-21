@@ -9,13 +9,20 @@ import { useState } from "react";
 import React from "react";
 
 const AddEmail = ({ navigation, route }) => {
-  const { email } = route.params || { email: [] };
+  const { email } = route.params;
   const [addEmail, setAddEmail] = useState("");
   const [addPassword, setAddPassword] = useState("");
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleAdd = () => {
     if (addEmail === "" || addPassword === "") {
       alert("Please fill up the form");
+    } else if (!validateEmail(addEmail)) {
+      alert("Invalid email format");
     } else {
       const maxKey = Math.max(...email.map((s) => parseInt(s.key)), 0);
       const newKey = (maxKey + 1).toString();
@@ -27,7 +34,7 @@ const AddEmail = ({ navigation, route }) => {
       };
 
       email.push(newEmail);
-      navigation.navigate("FlatListEmail");
+      navigation.goBack();
     }
   };
 
@@ -54,6 +61,7 @@ const AddEmail = ({ navigation, route }) => {
           placeholder="Add Password"
           value={addPassword}
           onChangeText={setAddPassword}
+          secureTextEntry={true}
         />
 
         <View

@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from "react-native";
+import { View, Text } from "react-native";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -19,12 +19,23 @@ const StackNavigator = () => {
       </View>
     );
   };
+
+  const headerLeft = () => {
+    return (
+      <View>
+        <Text style={{ marginLeft: 30, fontWeight: "500", fontSize: 18 }}>
+          PRELIM
+        </Text>
+      </View>
+    );
+  };
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginEmail">
         <Stack.Screen
           options={{
-            title: "PRELIM",
+            headerLeft: () => headerLeft(),
+            headerTitle: "",
             headerRight: () => header(),
           }}
           name="LoginEmail"
@@ -32,7 +43,8 @@ const StackNavigator = () => {
         />
         <Stack.Screen
           options={{
-            title: "PRELIM",
+            headerLeft: () => headerLeft(),
+            headerTitle: "",
             headerRight: () => header(),
             headerBackVisible: false,
           }}
@@ -41,7 +53,8 @@ const StackNavigator = () => {
         />
         <Stack.Screen
           options={{
-            title: "PRELIM",
+            headerLeft: () => headerLeft(),
+            headerTitle: "",
             headerRight: () => header(),
             headerBackVisible: false,
           }}
@@ -50,7 +63,9 @@ const StackNavigator = () => {
         />
         <Stack.Screen
           options={{
-            title: "PRELIM",
+            headerLeft: () => headerLeft(),
+            headerTitle: "",
+            headerRight: () => header(),
             headerBackVisible: false,
           }}
           name="EditEmail"
@@ -62,5 +77,3 @@ const StackNavigator = () => {
 };
 
 export default StackNavigator;
-
-const styles = StyleSheet.create({});
