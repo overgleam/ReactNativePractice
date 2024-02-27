@@ -1,11 +1,10 @@
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import StackNavigator from "./Components/Prelim/StackNavigator";
-
+import Navigator from "./Components/Prelim3/Navigator";
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <StackNavigator />
+      <Navigator />
     </SafeAreaView>
   );
 };
@@ -15,6 +14,5 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#95a7e8",
   },
 });

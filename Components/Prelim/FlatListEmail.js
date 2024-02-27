@@ -86,7 +86,7 @@ const FlatListEmail = ({ navigation }) => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 800); // Refresh indicator will be visible for at least 1 second
+    }, 1000);
   };
 
   return (

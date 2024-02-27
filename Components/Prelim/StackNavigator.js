@@ -10,7 +10,7 @@ import EditEmail from "./EditEmail";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
 
-  const header = () => {
+  const headerRight = () => {
     return (
       <View>
         <Text style={{ marginRight: 30, fontWeight: "500", fontSize: 18 }}>

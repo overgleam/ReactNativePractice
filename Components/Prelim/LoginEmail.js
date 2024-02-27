@@ -6,7 +6,7 @@ import {
   View,
   StatusBar,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Email from "./Emails.json";
 
 const LoginEmail = ({ navigation }) => {
@@ -25,7 +25,14 @@ const LoginEmail = ({ navigation }) => {
   };
 
   return (
-    <View style={{ justifyContent: "center", flex: 1, padding: 20 }}>
+    <View
+      style={{
+        justifyContent: "center",
+        flex: 1,
+        padding: 20,
+        backgroundColor: "#95a7e8",
+      }}
+    >
       <View style={styles.loginContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.loginText}>Email</Text>
