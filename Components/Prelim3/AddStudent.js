@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 
 const AddStudent = ({ navigation, route }) => {
+  const example = require("./images/dog1.gif");
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
   const { Students } = route.params;
@@ -29,8 +30,10 @@ const AddStudent = ({ navigation, route }) => {
   };
 
   const addStudent = () => {
-    if (name == "" || image == null) {
-      alert("Name and Image is required");
+    if (name == "") {
+      alert("Name is required");
+    } else if (image == null) {
+      alert("Image is required");
     } else {
       const newKey = Students.length + 1;
       const newStudent = { key: newKey, name: name, image: image };
@@ -41,76 +44,37 @@ const AddStudent = ({ navigation, route }) => {
   };
 
   return (
-    <View style={{ margin: 50, flex: 1 }}>
+    <View style={styles.container}>
       <View>
-        <TouchableOpacity style={{ marginBottom: 20 }} onPress={pickImage}>
+        <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
           <Image
-            style={{
-              width: 200,
-              height: 200,
-              resizeMode: "cover",
-              alignSelf: "center",
-              borderWidth: 1,
-              borderColor: "black",
-              borderRadius: 50,
-            }}
-            source={{ uri: image }}
+            style={styles.image}
+            source={typeof image === "string" ? { uri: image } : example}
           ></Image>
         </TouchableOpacity>
       </View>
       <View>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Name: </Text>
+        <Text style={styles.nameText}>Name: </Text>
         <TextInput
-          style={{
-            borderWidth: 2,
-            borderRadius: 15,
-            padding: 20,
-            marginVertical: 20,
-          }}
+          style={styles.addInput}
           placeholder="Enter name"
-          placeholderTextColor={"black"}
+          placeholderTextColor={"#f0dddb80"}
           value={name}
           onChangeText={(text) => setName(text)}
         />
       </View>
-      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={{
-            borderWidth: 2,
-            borderRadius: 15,
-            paddingVertical: 15,
-            paddingHorizontal: 25,
-            backgroundColor: "lightgreen",
-          }}
+          style={styles.saveButton}
           onPress={() => addStudent()}
         >
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: "bold",
-            }}
-          >
-            Save
-          </Text>
+          <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{
-            borderWidth: 2,
-            borderRadius: 15,
-            paddingVertical: 15,
-            paddingHorizontal: 25,
-            backgroundColor: "red",
-          }}
+          style={styles.deleteButton}
           onPress={() => navigation.goBack()}
         >
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: "bold",
-            }}
-          >
-            Cancel
-          </Text>
+          <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -119,4 +83,61 @@ const AddStudent = ({ navigation, route }) => {
 
 export default AddStudent;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: { padding: 50, flex: 1, backgroundColor: "#121013" },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 50,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    resizeMode: "cover",
+    alignSelf: "center",
+    borderWidth: 1,
+    borderColor: "#efdddc",
+    borderRadius: 20,
+  },
+  nameText: { fontSize: 20, fontWeight: "bold", color: "#efdddc" },
+  addInput: {
+    borderColor: "#696669",
+    backgroundColor: "#434041",
+    color: "#f0dddb",
+    borderWidth: 1,
+    borderRadius: 15,
+    padding: 20,
+    marginVertical: 20,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 20,
+  },
+  saveButton: {
+    borderWidth: 0.5,
+    borderRadius: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    backgroundColor: "#66f900",
+    borderColor: "#efdddc91",
+
+    shadowColor: "#efdddc",
+    shadowOffset: { width: 3, height: 4 },
+    shadowRadius: 0,
+    shadowOpacity: 1,
+  },
+  buttonText: { fontSize: 15, fontWeight: "bold", color: "black" },
+  deleteButton: {
+    borderWidth: 0.5,
+    borderRadius: 15,
+    borderColor: "#efdddc91",
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    backgroundColor: "#fe0000",
+
+    shadowColor: "#efdddc",
+    shadowOffset: { width: 3, height: 4 },
+    shadowRadius: 0,
+    shadowOpacity: 1,
+  },
+});

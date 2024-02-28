@@ -36,7 +36,6 @@ const Navigator = () => {
             headerLeft: () => headerLeft(),
             headerTitle: "",
             headerRight: () => headerRight(),
-            headerBackVisible: false,
           }}
           name="FlatListStudent"
           component={FlatListStudent}
@@ -57,5 +56,3 @@ const Navigator = () => {
 };
 
 export default Navigator;
-
-const styles = StyleSheet.create({});
