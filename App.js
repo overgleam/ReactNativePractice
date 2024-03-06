@@ -1,11 +1,31 @@
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
-import Navigator from "./Components/Prelim3/Navigator";
+import {
+  SafeAreaView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+import Navigator from "./Components/Activity 4/Navigator";
+import { useFonts } from "expo-font";
+
 const App = () => {
+  const [fontsLoaded] = useFonts({
+    "CabinetGrotesk-Medium": require("./assets/fonts/CabinetGrotesk/CabinetGrotesk-Medium.ttf"),
+    "CabinetGrotesk-Bold": require("./assets/fonts/CabinetGrotesk/CabinetGrotesk-Extrabold.ttf"),
+    "CabinetGrotesk-Black": require("./assets/fonts/CabinetGrotesk/CabinetGrotesk-Black.ttf"),
+    "CabinetGrotesk-Variable": require("./assets/fonts/CabinetGrotesk/CabinetGrotesk-Variable.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Navigator />
-    </SafeAreaView>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView style={styles.container}>
+        <Navigator />
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
