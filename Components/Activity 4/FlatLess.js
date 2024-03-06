@@ -18,7 +18,6 @@ const FlatLess = ({ navigation }) => {
     });
     return unsubscribe;
   }, [navigation]);
-
   const fetchUsers = () => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -53,7 +52,10 @@ const FlatLess = ({ navigation }) => {
   };
 
   const filteredUsers = users.filter((user) => {
-    return user.username.toLowerCase().includes(searchQuery.toLowerCase());
+    return (
+      user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
   const deleteUser = (key) => {
     db.transaction(
@@ -72,17 +74,36 @@ const FlatLess = ({ navigation }) => {
     );
   };
 
-  const editUser = (key) => {};
-
   const User = ({ user }) => {
+    const handleAlert = () => {
+      Alert.alert(
+        `You have selected ${user.username}?`,
+        "Are you sure you want to something with this user?",
+        [
+          {
+            text: "Delete",
+            onPress: () => deleteUser(user.key),
+            style: "destructive",
+          },
+          {
+            text: "Edit",
+            onPress: () => navigation.navigate("Edit", { key: user.key }),
+            style: "default",
+          },
+          { text: "Cancel", style: "cancel" },
+        ]
+      );
+    };
+
     return (
       <View>
         <Pressable
+          onLongPress={handleAlert}
           style={({ pressed }) => [
             styles.userContainer,
             {
-              top: pressed ? 4 : 0,
-              left: pressed ? 4 : 0,
+              top: pressed ? 5 : 0,
+              left: pressed ? 5 : 0,
             },
           ]}
           onPress={() =>
@@ -90,16 +111,6 @@ const FlatLess = ({ navigation }) => {
               "User Information",
               `Username: ${user.username}\nEmail: ${user.email}\nPassword: ${user.password}`
             )
-          }
-          onLongPress={() =>
-            Alert.alert("Delete", `Are you sure to delete ${user.username}?`, [
-              {
-                text: "Yes",
-                onPress: () => deleteUser(user.key),
-                style: "destructive",
-              },
-              { text: "No", style: "cancel" },
-            ])
           }
         >
           <Text style={styles.userName}>{user.username}</Text>
@@ -237,7 +248,6 @@ const styles = StyleSheet.create({
   addButton: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#f0dddb80",
@@ -290,7 +300,6 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     color: "#eededd",
-    fontSize: 24,
     paddingLeft: 20,
     fontFamily: "CabinetGrotesk-Medium",
   },
@@ -298,7 +307,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#323233",
     letterSpacing: 0.5,
-    color: "black",
     fontSize: 16,
     fontFamily: "CabinetGrotesk-Bold",
   },

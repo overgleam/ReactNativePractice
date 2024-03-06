@@ -5,6 +5,7 @@ import {
   TextInput,
   Pressable,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -55,7 +56,10 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={100}>
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      >
         <View style={styles.loginContainer}>
           <Text style={styles.loginText}>Login</Text>
           <View style={styles.loginInputContainer}>

@@ -4,6 +4,7 @@ import React from "react";
 import Add from "./Add";
 import FlatLess from "./FlatLess";
 import Login from "./Login";
+import Edit from "./EditUser";
 import { Text, View, StyleSheet } from "react-native";
 
 const Stack = createStackNavigator();
@@ -48,8 +49,14 @@ const Navigator = () => {
       >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Add" component={Add} />
+        <Stack.Screen name="Edit" component={Edit} />
         <Stack.Screen
-          options={{ gestureEnabled: false }}
+          options={{
+            gestureEnabled: false,
+            headerStyle: {
+              backgroundColor: "#ffa31a",
+            },
+          }}
           name="FlatLess"
           component={FlatLess}
         />

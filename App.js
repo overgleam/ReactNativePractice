@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  StatusBar,
 } from "react-native";
 import Navigator from "./Components/Activity 4/Navigator";
 import { useFonts } from "expo-font";
@@ -24,6 +25,7 @@ const App = () => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
         <Navigator />
+        <StatusBar style="auto" />
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
