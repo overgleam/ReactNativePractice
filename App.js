@@ -1,4 +1,5 @@
 import React from "react";
+import "react-native-gesture-handler";
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,7 +7,7 @@ import {
   Keyboard,
   StatusBar,
 } from "react-native";
-import Navigator from "./Components/Activity 4/Navigator";
+import Navigation from "./Components/Activity 5/Navigation";
 import { useFonts } from "expo-font";
 
 const App = () => {
@@ -22,12 +23,12 @@ const App = () => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <SafeAreaView style={styles.container}>
-        <Navigator />
-        <StatusBar style="auto" />
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+    // <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <SafeAreaView style={styles.container}>
+      <Navigation />
+      <StatusBar style="auto" />
+    </SafeAreaView>
+    // </TouchableWithoutFeedback>
   );
 };
 
@@ -36,6 +37,6 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121013",
+    backgroundColor: "#f3ebea",
   },
 });
