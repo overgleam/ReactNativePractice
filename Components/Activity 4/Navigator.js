@@ -6,10 +6,22 @@ import FlatLess from "./FlatLess";
 import Login from "./Login";
 import Edit from "./EditUser";
 import { Text, View, StyleSheet } from "react-native";
+import { useFonts } from "expo-font";
 
 const Stack = createStackNavigator();
 
 const Navigator = () => {
+  const [fontsLoaded] = useFonts({
+    "CabinetGrotesk-Medium": require("../../assets/fonts/CabinetGrotesk/CabinetGrotesk-Medium.ttf"),
+    "CabinetGrotesk-Bold": require("../../assets/fonts/CabinetGrotesk/CabinetGrotesk-Extrabold.ttf"),
+    "CabinetGrotesk-Black": require("../../assets/fonts/CabinetGrotesk/CabinetGrotesk-Black.ttf"),
+    "CabinetGrotesk-Variable": require("../../assets/fonts/CabinetGrotesk/CabinetGrotesk-Variable.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
