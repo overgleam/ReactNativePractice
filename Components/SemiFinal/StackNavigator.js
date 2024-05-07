@@ -15,6 +15,7 @@ function MyStack() {
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
+          animationTypeForReplace: "pop",
         }}
       >
         <Stack.Screen name="Home" component={Home} />

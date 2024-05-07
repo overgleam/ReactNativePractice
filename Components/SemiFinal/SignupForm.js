@@ -5,7 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  KeyboardAvoidingView,
 } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
 import * as yup from "yup";
 import client from "./client";
@@ -34,7 +36,7 @@ const validationSchema = yup.object().shape({
     .string()
     .trim()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(5, "Password must be at least 5 characters"),
   confirmPassword: yup
     .string()
     .trim()
@@ -56,12 +58,11 @@ const SignupForm = ({ navigation }) => {
 
       if (response.data.success) {
         alert("User created successfully");
-        navigation.navigate("Home", { success: true });
+        formikActions.resetForm();
+        navigation.replace("Home", { success: true });
       } else {
         alert(response.data.message);
       }
-
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -84,81 +85,104 @@ const SignupForm = ({ navigation }) => {
         }) => {
           const { username, email, password, confirmPassword } = values;
           return (
-            <>
-              <View style={styles.inputContainer}>
-                <Text style={styles.title}>Username</Text>
-                <Text style={styles.error}>
-                  {touched.username && errors.username}
+            <KeyboardAvoidingView
+              behavior="padding"
+              keyboardVerticalOffset={-50}
+            >
+              <>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 20,
+                    marginBottom: "10%",
+                    color: "white",
+                  }}
+                >
+                  Welcome to Sign Up
                 </Text>
-              </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.title}>Username</Text>
+                  <Text style={styles.error}>
+                    {touched.username && errors.username}
+                  </Text>
+                </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Username"
-                value={username}
-                onBlur={handleBlur("username")}
-                onChangeText={handleChange("username")}
-              />
-              <View style={styles.inputContainer}>
-                <Text style={styles.title}>Email</Text>
-                <Text style={styles.error}>
-                  {touched.email && errors.email}
-                </Text>
-              </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Username"
+                  placeholderTextColor={"#f0dddb80"}
+                  value={username}
+                  autoCapitalize="none"
+                  onBlur={handleBlur("username")}
+                  onChangeText={handleChange("username")}
+                />
+                <View style={styles.inputContainer}>
+                  <Text style={styles.title}>Email</Text>
+                  <Text style={styles.error}>
+                    {touched.email && errors.email}
+                  </Text>
+                </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                onBlur={handleBlur("email")}
-                value={email}
-                onChangeText={handleChange("email")}
-              />
-              <View style={styles.inputContainer}>
-                <Text style={styles.title}>Password</Text>
-                <Text style={styles.error}>
-                  {touched.password && errors.password}
-                </Text>
-              </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor={"#f0dddb80"}
+                  onBlur={handleBlur("email")}
+                  value={email}
+                  autoCapitalize="none"
+                  onChangeText={handleChange("email")}
+                />
+                <View style={styles.inputContainer}>
+                  <Text style={styles.title}>Password</Text>
+                  <Text style={styles.error}>
+                    {touched.password && errors.password}
+                  </Text>
+                </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onBlur={handleBlur("password")}
-                onChangeText={handleChange("password")}
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor={"#f0dddb80"}
+                  secureTextEntry
+                  value={password}
+                  onBlur={handleBlur("password")}
+                  onChangeText={handleChange("password")}
+                />
 
-              <View style={styles.inputContainer}>
-                <Text style={styles.title}>Confirm Password</Text>
-                <Text style={styles.error}>
-                  {touched.confirmPassword && errors.confirmPassword}
-                </Text>
-              </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.title}>Confirm Password</Text>
+                  <Text style={styles.error}>
+                    {touched.confirmPassword && errors.confirmPassword}
+                  </Text>
+                </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm Password"
-                secureTextEntry
-                value={confirmPassword}
-                onBlur={handleBlur("confirmPassword")}
-                onChangeText={handleChange("confirmPassword")}
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm Password"
+                  placeholderTextColor={"#f0dddb80"}
+                  secureTextEntry
+                  value={confirmPassword}
+                  onBlur={handleBlur("confirmPassword")}
+                  onChangeText={handleChange("confirmPassword")}
+                />
 
-              <TouchableOpacity
-                style={[styles.buttons, { backgroundColor: "lightblue" }]}
-                onPress={handleSubmit}
-              >
-                <Text>Signup</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.buttons, { backgroundColor: "lightblue" }]}
+                  onPress={handleSubmit}
+                >
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                  <AntDesign name="login" size={24} color="black" />
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.buttons}
-                onPress={() => navigation.goBack()}
-              >
-                <Text>Go Back</Text>
-              </TouchableOpacity>
-            </>
+                <TouchableOpacity
+                  style={styles.buttons}
+                  onPress={() => navigation.goBack()}
+                >
+                  <Text style={styles.buttonText}>Go Back</Text>
+                  <AntDesign name="back" size={24} color="black" />
+                </TouchableOpacity>
+              </>
+            </KeyboardAvoidingView>
           );
         }}
       </Formik>
@@ -170,26 +194,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 20,
+    paddingHorizontal: 20,
+    backgroundColor: "#121013",
   },
   input: {
-    height: 40,
-    borderColor: "gray",
+    backgroundColor: "#434041",
     borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttons: {
-    alignItems: "center",
-    backgroundColor: "red",
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 5,
+    borderColor: "#696669",
+    color: "#f0dddb",
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 20,
+    marginLeft: 5,
     marginBottom: 10,
+    fontWeight: "bold",
+    color: "white",
   },
   inputContainer: {
     flexDirection: "row",
@@ -197,7 +219,36 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "red",
-    fontSize: 12,
+    fontSize: 10,
+  },
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "#36e388",
+
+    borderColor: "#323233",
+    borderWidth: 1,
+    borderRadius: 20,
+
+    margin: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+
+    shadowColor: "#efdddd",
+    shadowOffset: { height: 4, width: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+
+    elevation: 5,
+
+    alignItems: "center",
+  },
+  buttonText: {
+    textAlign: "center",
+    color: "#323233",
+    letterSpacing: 0.5,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

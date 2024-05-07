@@ -5,7 +5,9 @@ import {
   View,
   StyleSheet,
   Text,
+  KeyboardAvoidingView,
 } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import client from "./client";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -23,7 +25,7 @@ const validationSchema = yup.object().shape({
     .string()
     .trim()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(5, "Password must be at least 5 characters"),
 });
 
 const LoginForm = ({ navigation }) => {
@@ -38,7 +40,7 @@ const LoginForm = ({ navigation }) => {
       if (response.data.success) {
         alert("Login successful");
         formikActions.resetForm();
-        navigation.navigate("Home", { success: true });
+        navigation.replace("Home", { success: true });
       } else {
         alert("Login failed");
       }
@@ -62,46 +64,70 @@ const LoginForm = ({ navigation }) => {
           errors,
           touched,
         }) => (
-          <>
-            <View style={styles.inputContainer}>
-              <Text style={styles.title}>Username</Text>
-              <Text style={styles.error}>
-                {touched.username && errors.username}
+          <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
+            <>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 20,
+                  marginBottom: "10%",
+                }}
+              >
+                Welcome to Login
               </Text>
-            </View>
-            <TextInput
-              style={styles.input}
-              onChangeText={handleChange("username")}
-              onBlur={handleBlur("username")}
-              value={values.username}
-              placeholder="Username"
-            />
-            <View style={styles.inputContainer}>
-              <Text style={styles.title}>Password</Text>
-              <Text style={styles.error}>
-                {touched.password && errors.password}
-              </Text>
-            </View>
-            <TextInput
-              style={styles.input}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-              placeholder="Password"
-              secureTextEntry
-            />
+              <View style={styles.inputContainer}>
+                <Text style={styles.title}>Username</Text>
+                <Text style={styles.error}>
+                  {touched.username && errors.username}
+                </Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                autoCapitalize="none"
+                onChangeText={handleChange("username")}
+                onBlur={handleBlur("username")}
+                value={values.username}
+                placeholder="Username"
+              />
+              <View style={styles.inputContainer}>
+                <Text style={styles.title}>Password</Text>
+                <Text style={styles.error}>
+                  {touched.password && errors.password}
+                </Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+                placeholder="Password"
+                secureTextEntry
+              />
 
-            <TouchableOpacity style={styles.buttons} onPress={handleSubmit}>
-              <Text>Login</Text>
-            </TouchableOpacity>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "100%",
+                  justifyContent: "space-around",
+                }}
+              >
+                <TouchableOpacity style={styles.buttons} onPress={handleSubmit}>
+                  <Text style={styles.buttonText}>Login</Text>
 
-            <TouchableOpacity
-              style={styles.buttons}
-              onPress={() => navigation.navigate("Signup")}
-            >
-              <Text>Signup</Text>
-            </TouchableOpacity>
-          </>
+                  <AntDesign name="login" size={24} color="black" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.buttons, { backgroundColor: "#fce823" }]}
+                  onPress={() => navigation.navigate("Signup")}
+                >
+                  <Text style={styles.buttonText}>Sign Up</Text>
+
+                  <AntDesign name="user" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
+            </>
+          </KeyboardAvoidingView>
         )}
       </Formik>
     </View>
@@ -111,27 +137,49 @@ const LoginForm = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#ebdedc",
     justifyContent: "center",
     padding: 20,
   },
   input: {
-    height: 40,
-    borderColor: "gray",
+    backgroundColor: "#fbe0dd",
+    borderColor: "black",
     borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 20,
+
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    width: "100%",
+
+    marginVertical: 10,
   },
   buttons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "#36e388",
+
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 20,
+
+    margin: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+
+    shadowColor: "black",
+    shadowOffset: { height: 5, width: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+
+    elevation: 5,
+
     alignItems: "center",
-    backgroundColor: "lightblue",
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 5,
   },
   title: {
     fontSize: 20,
+    marginLeft: 5,
     marginBottom: 10,
+    fontWeight: "bold",
   },
   inputContainer: {
     flexDirection: "row",
@@ -139,7 +187,14 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "red",
-    fontSize: 12,
+    fontSize: 10,
+  },
+  buttonText: {
+    textAlign: "center",
+    color: "#323233",
+    letterSpacing: 0.5,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
